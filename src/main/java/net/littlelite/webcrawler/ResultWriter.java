@@ -1,6 +1,13 @@
+/**
+ * WebCrawler
+ * Copyright (C) 2021 Alessio Saltarin
+ * MIT License
+ */
+
 package net.littlelite.webcrawler;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ResultWriter {
@@ -14,10 +21,10 @@ public class ResultWriter {
         {
             var oFile = new File("results.csv");
             var fos = new FileOutputStream(oFile);
-            var os = new OutputStreamWriter(fos, "UTF-16");
+            var os = new OutputStreamWriter(fos, StandardCharsets.UTF_16);
             var bw = new BufferedWriter(os);
 
-            StringBuffer header = new StringBuffer();
+            var header = new StringBuilder();
             header.append("WEBSITE");
             header.append(CSV_SEPARATOR);
             header.append("URL");
@@ -31,7 +38,7 @@ public class ResultWriter {
 
             for (Result result : resultList)
             {
-                StringBuffer oneLine = new StringBuffer();
+                var oneLine = new StringBuilder();
                 oneLine.append(result.getWebSite());
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(result.getUrl());

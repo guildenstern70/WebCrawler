@@ -1,3 +1,9 @@
+/**
+ * WebCrawler
+ * Copyright (C) 2021 Alessio Saltarin
+ * MIT License
+ */
+
 package net.littlelite.webcrawler;
 
 public class Result {

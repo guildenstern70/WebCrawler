@@ -1,3 +1,9 @@
+/**
+ * WebCrawler
+ * Copyright (C) 2021 Alessio Saltarin
+ * MIT License
+ */
+
 package net.littlelite.webcrawler;
 
 import org.jsoup.Jsoup;
@@ -12,10 +18,10 @@ import java.util.List;
 
 public class WebCrawler {
 
-    private static final int MAX_DEPTH = 4;
+    private static final int MAX_DEPTH = 5;
 
-    private HashSet<String> links;
-    private List<Result> resultList;
+    private final HashSet<String> links;
+    private final List<Result> resultList;
     private String webSite;
 
     public WebCrawler() {
@@ -24,7 +30,7 @@ public class WebCrawler {
     }
 
     public void getPageLinks() {
-        this.getPageLinks(this.webSite, 0);
+        this.getPageLinks("https://" +  this.webSite, 0);
     }
 
     private void getPageLinks(String URL, int depth) {
@@ -33,11 +39,9 @@ public class WebCrawler {
             var result = new Result(this.webSite, depth, URL);
             try {
                 links.add(URL);
-
                 Document document = Jsoup.connect(URL).get();
                 Elements linksOnPage = document.select("a[href]");
                 result.setResult("OK");
-
                 depth++;
                 for (Element page : linksOnPage) {
                     getPageLinks(page.attr("abs:href"), depth);
@@ -45,6 +49,12 @@ public class WebCrawler {
             } catch (IOException e) {
                 result.setResult(e.getMessage());
                 System.err.println("For '" + URL + "': " + e.getMessage());
+            }
+            catch (IllegalArgumentException ilex) {
+                System.err.println("Wrong URL: " + URL);
+                ilex.printStackTrace();
+                System.err.println("Retrying with www." + URL);
+                this.getPageLinks("https://www." + this.webSite, 0);
             }
             this.resultList.add(result);
         }
@@ -57,32 +67,9 @@ public class WebCrawler {
     public static void main(String[] args) {
         System.out.println("WebCrawler v.0.2");
         var sites = List.of(
-               "https://anchoreyes.com", "https://bulldoggin.com");
-
-//        var sites = List.of(
-//                "https://anchoreyes.com",
-//                "https://aperolspritzsocials.com",
-//                "https://appletonestate.com",
-//                "https://bisquitdubouche.com",
-//                "https://bulldoggin.com",
-//                "https://campariacademy.com.au",
-//                "https://campariacademy.it",
-//                "https://crodino.com",
-//                "https://espolontequila.com",
-//                "https://grappafrattina.it",
-//                "https://montelobos.com",
-//                "https://ondina.com",
-//                "https://skyyvodka.com",
-//                "https://wildturkeybourbon.com",
-//                "https://wildturkeybourbon.com.au",
-//                "https://aperolspritz.co.nz",
-//                "https://glengrant.com.au",
-//                "https://amarobraulio.it",
-//                "https://aperolspritz.com.au",
-//                "https://grandmarnier.com",
-//                "https://kokokanu.com"
-//        );
-
+                "anchoreyes.com",
+                "aperolspritzsocials.com"
+        );
         var wc = new WebCrawler();
         sites.forEach( (site) -> {
                 wc.setWebSite(site);
